@@ -6,7 +6,7 @@ import (
 	"cgol-go/life"
 )
 
-var seed = [][]uint8{
+var customSeed = [][]uint8{
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 0
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 1
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 2
@@ -38,10 +38,15 @@ func main() {
 	var cycles = flag.Int("cycles", 0, "number of life cycles to run")
 	var xSize = flag.Int("xsize", 25, "x size")
 	var ySize = flag.Int("ysize", 25, "y size")
-
-	var pattern = flag.String("pattern", "glider", "pattern to use as a seed")
+	var pattern = flag.String("pattern", "", "pattern to use as a seed")
 	flag.Parse()
-	seed := life.CreateSeed(*pattern, *xSize, *ySize)
+
+	var seed [][]uint8
+	if *pattern == "" {
+		seed = customSeed
+	} else {
+		seed = life.CreateSeed(*pattern, *xSize, *ySize)
+	}
 
 	l := life.NewLife(seed)
 	l.Run(*cycles)

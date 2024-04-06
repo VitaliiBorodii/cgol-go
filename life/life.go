@@ -26,6 +26,7 @@ func NewLife(seed [][]uint8) *Life {
 	l := Life{}
 	l.seed = seed
 	l.calculateInitState()
+	fmt.Println("Grid size: %d x %d\n", l.xSize, l.ySize)
 	return &l
 }
 
@@ -61,10 +62,10 @@ func (l *Life) nextState() {
 	for _, point := range l.currentState {
 		subgrid := l.pointBoundaries(point)
 
-		for i := subgrid[0][0]; i <= subgrid[1][0]; i++ {
-			for j := subgrid[0][1]; j <= subgrid[1][1]; j++ {
-				newPoint := [2]int{i, j}
-				key := pointKey(i, j)
+		for x := subgrid[0][0]; x <= subgrid[1][0]; x++ {
+			for y := subgrid[0][1]; y <= subgrid[1][1]; y++ {
+				newPoint := [2]int{x, y}
+				key := pointKey(x, y)
 
 				// no need to check point that was already checked
 				if _, ok := l._calculatedPoints[key]; ok {
@@ -94,9 +95,9 @@ func (l *Life) countAliveNeighbours(point [2]int) int {
 	subgrid := l.pointBoundaries(point)
 	var neighboursCount int
 
-	for i := subgrid[0][0]; i <= subgrid[1][0]; i++ {
-		for j := subgrid[0][1]; j <= subgrid[1][1]; j++ {
-			key := pointKey(i, j)
+	for x := subgrid[0][0]; x <= subgrid[1][0]; x++ {
+		for y := subgrid[0][1]; y <= subgrid[1][1]; y++ {
+			key := pointKey(x, y)
 			if key == startKey { // do not count itself
 				continue
 			}

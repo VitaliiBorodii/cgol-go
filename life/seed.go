@@ -1,7 +1,5 @@
 package life
 
-import "fmt"
-
 func CreateSeed(patternStr string, xSize, ySize int) [][]uint8 {
 	pattern, ok := patterns[patternStr]
 	if !ok {
@@ -23,15 +21,10 @@ func CreateSeed(patternStr string, xSize, ySize int) [][]uint8 {
 	for y := range seed {
 		seed[y] = make([]uint8, xSize, xSize)
 	}
-	fmt.Println("pattern", pattern)
-	fmt.Println("xSize", xSize, "ySize", ySize)
-
-	fmt.Println("startX", startX, "startY", startY)
-	fmt.Println("patternXSize", patternXSize, "patternYSize", patternYSize)
 
 	for x := 0; x <= patternXSize; x++ {
 		for y := 0; y <= patternYSize; y++ {
-			seed[y+startY][x+startX] = getValue(pattern, y, x)
+			seed[x+startX][y+startY] = getValue(pattern, x, y)
 		}
 	}
 
