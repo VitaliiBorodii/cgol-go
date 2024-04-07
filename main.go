@@ -41,7 +41,7 @@ func main() {
 	var pattern = flag.String("pattern", "", "pattern to use as a seed")
 	var overflow = flag.Bool("overflow", false, "allow to overflow of the grid boundaries")
 	var infinite = flag.Bool("infinite", false, "make the game of life infinite (ignores the `cycles` flag)")
-	var speed = flag.Uint("speed", 1, "animation speed (1 frame per second by default)")
+	var speed = flag.Uint("speed", 10, "animation speed (1 frame per second when speed = 1)")
 
 	flag.Parse()
 

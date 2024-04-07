@@ -6,7 +6,7 @@
 
 will run `20` cycles of the game life. 
 
-the program will print it's state after each cycle with `1s` delay
+program will print it's state after each cycle with `100ms` delay
 
 example output:
 ```
@@ -49,13 +49,13 @@ ____________________________________________________
 | patern | enum | `''` | pattern to use as a seed`*`|
 | overflow | bool | `false` | allow to overflow the grid boundaries and make it cyclical|
 | infinite | bool | `false` | make the game of life infinite (ignores the `cycles` flag)|
-| speed | uint | 1 | animation speed (1 frame per second by default)|
+| speed | uint | 10 | animation speed (1 frame per second if speed = 1)|
 
 `*`allowed values for a `pattern` argument: `glider`, `lwss`, `bee-hive`
 
 in case you're running the game with `--infinite` flag - click `Ctrl+C` to stop it
 
-`overflow` mode will allow cells to reach out of the grid size and appear on the opposite side, which creates a semblance of the infinite grid
+`overflow` mode will allow cells to reach out of the grid size and appear on the opposite side, which creates a semblance of an infinite grid
 
 `speed = 4` will result in 4x animation speed (`250ms` delay between life cycles)
 
