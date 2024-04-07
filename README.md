@@ -46,9 +46,14 @@ ____________________________________________________
 | cycles | int | 0 | number of life cycles to run |
 | xsize | int | 25 | width of the grid |
 | ysize | int | 25 | height of the grid |
-| patern | enum | `'glider'` | pattern to use as a seed for the 'life'`*`|
+| patern | enum | `''` | pattern to use as a seed`*`|
+| overflow | bool | `false` | allow to overflow the grid boundaries and make it cyclical|
+| infinite | bool | `false` | make the game of life infinite (ignores the `cycles` flag)|
+| speed | uint | 1 | animation speed (1 frame per second by default)|
 
 `*`allowed values for a `pattern` argument: `glider`, `lwss`, `bee-hive`
+
+in case you're running the game with `--infinite` flag - click `Ctrl+C` to stop it
 
 -----
 By default the game of life will start with a [`glider`](https://conwaylife.com/wiki/Glider) pattern in the middle of `25x25` grid

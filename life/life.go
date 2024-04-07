@@ -6,16 +6,20 @@ import (
 	"time"
 )
 
-var animationDelay = time.Millisecond * 100
+var animationDelay = time.Second
 
 type Life struct {
-	seed  [][]uint8
-	xSize int
-	ySize int
+	seed   [][]uint8
+	xSize  int
+	ySize  int
+	cycles int
 
 	currentState map[string][2]int
 
-	_calculatedPoints map[string]interface{}
+	withOverflow   bool
+	animationDelay time.Duration
+
+	calculatedPoints map[string]interface{}
 }
 
 func pointKey(x, y int) string {
@@ -25,18 +29,38 @@ func pointKey(x, y int) string {
 func NewLife(seed [][]uint8) *Life {
 	l := Life{}
 	l.seed = seed
+	l.animationDelay = animationDelay
 	l.calculateInitState()
-	fmt.Println("Grid size: %d x %d\n", l.xSize, l.ySize)
+	fmt.Printf("Grid size: %d x %d\n", l.xSize, l.ySize)
 	return &l
+}
+
+func (l *Life) tick() {
+	fmt.Printf("cycle: %d | alive cells: %d\n", l.cycles, len(l.currentState))
+	l.printStateString()
+	time.Sleep(l.animationDelay)
+	l.nextState()
+	l.cycles++
 }
 
 func (l *Life) Run(cycles int) {
 	for i := 0; i <= cycles; i++ {
-		fmt.Printf("cycle: %d | alive cells: %d\n", i, len(l.currentState))
-		l.printStateString()
-		time.Sleep(animationDelay)
-		l.nextState()
+		l.tick()
 	}
+}
+
+func (l *Life) RunInfinite() {
+	for {
+		l.tick()
+	}
+}
+
+func (l *Life) WithOverFlow(overflow bool) {
+	l.withOverflow = overflow
+}
+
+func (l *Life) WithAnimationSpeed(speed uint) {
+	l.animationDelay = animationDelay / time.Duration(speed)
 }
 
 func (l *Life) calculateInitState() {
@@ -53,87 +77,96 @@ func (l *Life) calculateInitState() {
 		}
 	}
 	l.currentState = state
-	l._calculatedPoints = map[string]interface{}{}
+	l.calculatedPoints = map[string]interface{}{}
 }
 
 func (l *Life) nextState() {
 	newState := map[string][2]int{}
 
 	for _, point := range l.currentState {
-		subgrid := l.pointBoundaries(point)
+		neighbours := l.getNeighrouringPoints(point)
 
-		for x := subgrid[0][0]; x <= subgrid[1][0]; x++ {
-			for y := subgrid[0][1]; y <= subgrid[1][1]; y++ {
-				newPoint := [2]int{x, y}
-				key := pointKey(x, y)
+		for _, point := range append(neighbours, point) {
+			x, y := point[0], point[1]
 
-				// no need to check point that was already checked
-				if _, ok := l._calculatedPoints[key]; ok {
-					continue
-				}
+			newPoint := [2]int{x, y}
+			key := pointKey(x, y)
 
-				count := l.countAliveNeighbours(newPoint)
-				_, alive := l.currentState[key]
+			// no need to check point that was already checked
+			if _, ok := l.calculatedPoints[key]; ok {
+				continue
+			}
 
-				if alive {
-					if count == 2 || count == 3 {
-						newState[key] = newPoint
-					}
-				} else if count == 3 {
+			count := l.countAliveNeighbours(newPoint)
+			_, alive := l.currentState[key]
+
+			if alive {
+				if count == 2 || count == 3 {
 					newState[key] = newPoint
 				}
-				l._calculatedPoints[key] = nil
+			} else if count == 3 {
+				newState[key] = newPoint
 			}
+			l.calculatedPoints[key] = nil
 		}
 	}
 	l.currentState = newState
-	l._calculatedPoints = map[string]interface{}{}
+	l.calculatedPoints = map[string]interface{}{}
 }
 
 func (l *Life) countAliveNeighbours(point [2]int) int {
-	startKey := pointKey(point[0], point[1])
-	subgrid := l.pointBoundaries(point)
+	neighbouringPoints := l.getNeighrouringPoints(point)
 	var neighboursCount int
 
-	for x := subgrid[0][0]; x <= subgrid[1][0]; x++ {
-		for y := subgrid[0][1]; y <= subgrid[1][1]; y++ {
-			key := pointKey(x, y)
-			if key == startKey { // do not count itself
-				continue
-			}
-			if _, ok := l.currentState[key]; ok {
-				neighboursCount++
-			}
+	for _, point := range neighbouringPoints {
+		x, y := point[0], point[1]
+
+		key := pointKey(x, y)
+
+		if _, ok := l.currentState[key]; ok {
+			neighboursCount++
 		}
 	}
+
 	return neighboursCount
 }
 
-func (l *Life) pointBoundaries(point [2]int) [2][2]int {
+func (l *Life) getNeighrouringPoints(point [2]int) [][2]int {
 	x, y := point[0], point[1]
-	var result [2][2]int
+	var result = make([][2]int, 0, 8)
+	for i := x - 1; i <= x+1; i++ {
+		for j := y - 1; j <= y+1; j++ {
+			if i == x && j == y {
+				continue
+			}
 
-	if x-1 < 0 { // xMin
-		result[0][0] = x
-	} else {
-		result[0][0] = x - 1
-	}
-	if x+1 >= l.xSize { // xMax
-		result[1][0] = x
-	} else {
-		result[1][0] = x + 1
+			if !l.withOverflow {
+				if i < 0 || i >= l.xSize || j < 0 || j >= l.ySize {
+					continue
+				}
+			}
+
+			var xPoint, yPoint int
+			if i < 0 {
+				xPoint = i + l.xSize
+			} else if i >= l.xSize {
+				xPoint = i - l.xSize
+			} else {
+				xPoint = i
+			}
+
+			if j < 0 {
+				yPoint = j + l.ySize
+			} else if j >= l.ySize {
+				yPoint = j - l.ySize
+			} else {
+				yPoint = j
+			}
+
+			result = append(result, [2]int{xPoint, yPoint})
+		}
 	}
 
-	if y-1 < 0 { // yMin
-		result[0][1] = y
-	} else {
-		result[0][1] = y - 1
-	}
-	if y+1 >= l.ySize { // yMax
-		result[1][1] = y
-	} else {
-		result[1][1] = y + 1
-	}
 	return result
 }
 

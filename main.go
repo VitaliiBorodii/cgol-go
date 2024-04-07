@@ -39,6 +39,10 @@ func main() {
 	var xSize = flag.Int("xsize", 25, "x size")
 	var ySize = flag.Int("ysize", 25, "y size")
 	var pattern = flag.String("pattern", "", "pattern to use as a seed")
+	var overflow = flag.Bool("overflow", false, "allow to overflow of the grid boundaries")
+	var infinite = flag.Bool("infinite", false, "make the game of life infinite (ignores the `cycles` flag)")
+	var speed = flag.Uint("speed", 1, "animation speed (1 frame per second by default)")
+
 	flag.Parse()
 
 	var seed [][]uint8
@@ -49,5 +53,11 @@ func main() {
 	}
 
 	l := life.NewLife(seed)
-	l.Run(*cycles)
+	l.WithOverFlow(*overflow)
+	l.WithAnimationSpeed(*speed)
+	if *infinite {
+		l.RunInfinite()
+	} else {
+		l.Run(*cycles)
+	}
 }
