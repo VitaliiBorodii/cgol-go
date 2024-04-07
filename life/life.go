@@ -26,9 +26,11 @@ type Life struct {
 	calculatedPoints map[string]interface{}
 }
 
-func NewLife(seed [][]uint8) *Life {
+func NewLife(seed [][]uint8, xSize, ySize int) *Life {
 	l := Life{}
 	l.seed = seed
+	l.xSize = xSize
+	l.ySize = ySize
 	l.animationDelay = animationDelay
 	l.calculateInitState()
 	fmt.Printf("Grid size: %d x %d\n", l.xSize, l.ySize)
@@ -65,7 +67,9 @@ func (l *Life) WithAnimationSpeed(speed uint) {
 
 func (l *Life) calculateInitState() {
 	state := map[string][2]int{}
-	l.ySize = len(l.seed)
+	if len(l.seed) > l.xSize {
+		l.ySize = len(l.seed)
+	}
 	for y, row := range l.seed {
 		if len(row) > l.xSize {
 			l.xSize = len(row)

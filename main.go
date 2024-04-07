@@ -52,7 +52,7 @@ func main() {
 		seed = life.CreateSeed(*pattern, *xSize, *ySize)
 	}
 
-	l := life.NewLife(seed)
+	l := life.NewLife(seed, *xSize, *ySize)
 	l.WithOverFlow(*overflow)
 	l.WithAnimationSpeed(*speed)
 	if *infinite {
