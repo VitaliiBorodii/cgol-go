@@ -6,7 +6,7 @@
 
 will run `20` cycles of the game life. 
 
-the program will print it's state after each cycle with `100ms` delay
+the program will print it's state after each cycle with `1s` delay
 
 example output:
 ```
@@ -54,6 +54,10 @@ ____________________________________________________
 `*`allowed values for a `pattern` argument: `glider`, `lwss`, `bee-hive`
 
 in case you're running the game with `--infinite` flag - click `Ctrl+C` to stop it
+
+`overflow` mode will allow cells to reach out of the grid size and appear on the opposite side, which creates a semblance of the infinite grid
+
+`speed = 4` will result in 4x animation speed (`250ms` delay between life cycles)
 
 -----
 By default the game of life will start with a [`glider`](https://conwaylife.com/wiki/Glider) pattern in the middle of `25x25` grid

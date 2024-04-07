@@ -24,7 +24,7 @@ func CreateSeed(patternStr string, xSize, ySize int) [][]uint8 {
 
 	for x := 0; x <= patternXSize; x++ {
 		for y := 0; y <= patternYSize; y++ {
-			seed[x+startX][y+startY] = getValue(pattern, x, y)
+			seed[y+startY][x+startX] = getValue(pattern, x, y)
 		}
 	}
 
@@ -32,13 +32,13 @@ func CreateSeed(patternStr string, xSize, ySize int) [][]uint8 {
 }
 
 func getValue(pattern [][]uint8, x, y int) uint8 {
-	if x >= len(pattern) {
+	if y >= len(pattern) {
 		return 0
 	}
-	if y >= len(pattern[x]) {
+	if x >= len(pattern[y]) {
 		return 0
 	}
 
-	return pattern[x][y]
+	return pattern[y][x]
 
 }

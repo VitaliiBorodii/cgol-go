@@ -8,11 +8,15 @@ import (
 
 var animationDelay = time.Second
 
+func pointKey(x, y int) string {
+	return fmt.Sprintf("%dx%d", x, y)
+}
+
 type Life struct {
-	seed   [][]uint8
-	xSize  int
-	ySize  int
-	cycles int
+	seed  [][]uint8
+	xSize int
+	ySize int
+	cycle int
 
 	currentState map[string][2]int
 
@@ -20,10 +24,6 @@ type Life struct {
 	animationDelay time.Duration
 
 	calculatedPoints map[string]interface{}
-}
-
-func pointKey(x, y int) string {
-	return fmt.Sprintf("%dx%d", x, y)
 }
 
 func NewLife(seed [][]uint8) *Life {
@@ -36,11 +36,11 @@ func NewLife(seed [][]uint8) *Life {
 }
 
 func (l *Life) tick() {
-	fmt.Printf("cycle: %d | alive cells: %d\n", l.cycles, len(l.currentState))
+	fmt.Printf("cycle: %d | alive cells: %d\n", l.cycle, len(l.currentState))
 	l.printStateString()
 	time.Sleep(l.animationDelay)
 	l.nextState()
-	l.cycles++
+	l.cycle++
 }
 
 func (l *Life) Run(cycles int) {
