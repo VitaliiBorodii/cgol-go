@@ -60,4 +60,4 @@ in case you're running the game with `--infinite` flag - click `Ctrl+C` to stop 
 `speed = 4` will result in 4x animation speed (`250ms` delay between life cycles)
 
 -----
-By default the game of life will start with a [`glider`](https://conwaylife.com/wiki/Glider) pattern in the middle of `25x25` grid
+By default the game of life will start with a [`glider`](https://conwaylife.com/wiki/Glider) pattern in the middle of `25x25` grid. You can change the default seed by updating `customSeed` variable in the `main.go` file
