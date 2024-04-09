@@ -22,8 +22,6 @@ type Life struct {
 
 	withOverflow   bool
 	animationDelay time.Duration
-
-	calculatedPoints map[string]interface{}
 }
 
 func NewLife(seed [][]uint8, xSize, ySize int) *Life {
@@ -81,25 +79,25 @@ func (l *Life) calculateInitState() {
 		}
 	}
 	l.currentState = state
-	l.calculatedPoints = map[string]interface{}{}
 }
 
 func (l *Life) nextState() {
 	newState := map[string][2]int{}
+	calculatedPoints := map[string]interface{}{}
 
 	for _, point := range l.currentState {
 		neighbours := l.getNeighrouringPoints(point)
 
 		for _, point := range append(neighbours, point) {
 			x, y := point[0], point[1]
-
-			newPoint := [2]int{x, y}
 			key := pointKey(x, y)
 
 			// no need to check point that was already checked
-			if _, ok := l.calculatedPoints[key]; ok {
+			if _, ok := calculatedPoints[key]; ok {
 				continue
 			}
+
+			newPoint := [2]int{x, y}
 
 			count := l.countAliveNeighbours(newPoint)
 			_, alive := l.currentState[key]
@@ -111,11 +109,10 @@ func (l *Life) nextState() {
 			} else if count == 3 {
 				newState[key] = newPoint
 			}
-			l.calculatedPoints[key] = nil
+			calculatedPoints[key] = nil
 		}
 	}
 	l.currentState = newState
-	l.calculatedPoints = map[string]interface{}{}
 }
 
 func (l *Life) countAliveNeighbours(point [2]int) int {
