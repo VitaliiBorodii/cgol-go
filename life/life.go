@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var animationDelay = time.Second
+const defaultAnimationDelay = time.Second
 
 func pointKey(x, y int) string {
 	return fmt.Sprintf("%dx%d", x, y)
@@ -20,8 +20,9 @@ type Life struct {
 
 	currentState map[string][2]int
 
-	withOverflow   bool
-	animationDelay time.Duration
+	disableStatePrinting bool
+	withOverflow         bool
+	animationDelay       time.Duration
 }
 
 func NewLife(seed [][]uint8, xSize, ySize int) *Life {
@@ -29,7 +30,7 @@ func NewLife(seed [][]uint8, xSize, ySize int) *Life {
 	l.seed = seed
 	l.xSize = xSize
 	l.ySize = ySize
-	l.animationDelay = animationDelay
+	l.animationDelay = defaultAnimationDelay
 	l.calculateInitState()
 	fmt.Printf("Grid size: %d x %d\n", l.xSize, l.ySize)
 	return &l
@@ -60,7 +61,22 @@ func (l *Life) WithOverFlow(overflow bool) {
 }
 
 func (l *Life) WithAnimationSpeed(speed uint) {
-	l.animationDelay = animationDelay / time.Duration(speed)
+	l.animationDelay = defaultAnimationDelay / time.Duration(speed)
+}
+
+func (l *Life) disablePrintingState() {
+	l.disableStatePrinting = true
+	l.animationDelay = 0
+}
+
+func (l *Life) getAliveCells() []string {
+	cells := make([]string, len(l.currentState))
+	i := 0
+	for k := range l.currentState {
+		cells[i] = k
+		i++
+	}
+	return cells
 }
 
 func (l *Life) calculateInitState() {
@@ -172,6 +188,9 @@ func (l *Life) getNeighrouringPoints(point [2]int) [][2]int {
 }
 
 func (l *Life) printStateString() {
+	if l.disableStatePrinting {
+		return
+	}
 	str := l.getStateString()
 	fmt.Println(str)
 }
